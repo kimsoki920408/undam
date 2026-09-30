@@ -12,6 +12,11 @@ import {
   classifyCareerContext,
 } from "@/lib/fortune/classify-career-context";
 
+import {
+  buildCareerRecommendationGuidance,
+  type CareerRecommendationGuidance,
+} from "@/lib/fortune/build-career-recommendation-guidance";
+
 type RoleComparison = {
   employee:
     CareerRoleFit;
@@ -76,6 +81,11 @@ export function buildCareerRecommendations(
     context,
   );
 
+const recommendationGuidance =
+  buildCareerRecommendationGuidance(
+    classification,
+  );
+
 const currentRole =
   classification.primaryRole;
 
@@ -87,11 +97,15 @@ const currentRole =
     currentRole ===
     "sales"
   ) {
-    return buildSalesRecommendations(
-      jobName,
-      context,
-      roleComparison,
-    );
+    return applyRecommendationGuidance(
+  buildSalesRecommendations(
+    jobName,
+    context,
+    roleComparison,
+  ),
+  recommendationGuidance,
+  roleComparison,
+);
   }
 
   /*
@@ -101,11 +115,15 @@ const currentRole =
     currentRole ===
     "business"
   ) {
-    return buildBusinessRecommendations(
-      jobName,
-      context,
-      roleComparison,
-    );
+    return applyRecommendationGuidance(
+  buildBusinessRecommendations(
+    jobName,
+    context,
+    roleComparison,
+  ),
+  recommendationGuidance,
+  roleComparison,
+);
   }
 
   /*
@@ -115,11 +133,15 @@ const currentRole =
     currentRole ===
     "specialist"
   ) {
-    return buildSpecialistRecommendations(
-      jobName,
-      context,
-      roleComparison,
-    );
+    return applyRecommendationGuidance(
+  buildSpecialistRecommendations(
+    jobName,
+    context,
+    roleComparison,
+  ),
+  recommendationGuidance,
+  roleComparison,
+);
   }
 
   /*
@@ -129,11 +151,15 @@ const currentRole =
     currentRole ===
     "leadership"
   ) {
-    return buildLeadershipRecommendations(
-      jobName,
-      context,
-      roleComparison,
-    );
+    return applyRecommendationGuidance(
+  buildLeadershipRecommendations(
+    jobName,
+    context,
+    roleComparison,
+  ),
+  recommendationGuidance,
+  roleComparison,
+);
   }
 
   /*
@@ -143,11 +169,15 @@ const currentRole =
     currentRole ===
     "employee"
   ) {
-    return buildEmployeeRecommendations(
-      jobName,
-      context,
-      roleComparison,
-    );
+    return applyRecommendationGuidance(
+  buildEmployeeRecommendations(
+    jobName,
+    context,
+    roleComparison,
+  ),
+  recommendationGuidance,
+  roleComparison,
+);
   }
 
   /*
@@ -669,6 +699,76 @@ function buildEmployeeRecommendations(
 
       oneLine:
         "내부 업무만 반복하기보다 고객과 시장의 반응을 직접 확인할 수 있는 방향입니다.",
+    },
+  ];
+}
+
+function applyRecommendationGuidance(
+  currentRecommendations:
+    CareerRoleFit[],
+
+  guidance:
+    CareerRecommendationGuidance,
+
+  roles:
+    RoleComparison,
+): CareerRoleFit[] {
+  const current =
+    currentRecommendations[0];
+
+  if (
+    !current
+  ) {
+    return currentRecommendations;
+  }
+
+  const adjacentRecommendations =
+    guidance.adjacentPaths.map(
+      (
+        path,
+        index,
+      ): CareerRoleFit => ({
+        ...roles[
+          path.role
+        ],
+
+        id:
+          `adjacent-domain-${index + 1}`,
+
+        title:
+          path.title,
+
+        oneLine:
+          path.oneLine,
+      }),
+    );
+
+  const longTerm =
+    guidance.longTermPath;
+
+  return [
+    {
+      ...current,
+
+      oneLine:
+        guidance.currentFocus,
+    },
+
+    ...adjacentRecommendations,
+
+    {
+      ...roles[
+        longTerm.role
+      ],
+
+      id:
+        "longterm-domain",
+
+      title:
+        longTerm.title,
+
+      oneLine:
+        longTerm.oneLine,
     },
   ];
 }

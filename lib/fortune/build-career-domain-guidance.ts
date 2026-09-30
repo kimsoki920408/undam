@@ -266,6 +266,50 @@ export function buildCareerDomainGuidance(
   classification:
     CareerClassification,
 ): CareerDomainGuidance {
+  if (
+    classification.domain ===
+    "construction-realestate"
+  ) {
+    if (
+      classification.primaryRole ===
+      "sales"
+    ) {
+      return {
+        workMeaning:
+          "고객의 조건과 매물을 정확히 연결하고 신뢰를 쌓아 실제 거래로 이어가는 능력이 중요한 분야입니다.",
+
+        successEvidence: [
+          "고객 조건에 맞는 매물을 정확히 제안한 경험",
+          "상담이 실제 거래로 이어진 사례",
+          "소개나 재거래로 이어진 고객 관계",
+        ],
+
+        risk:
+          "단기 거래 성사에만 집중하면 고객 신뢰와 소개로 이어지는 장기 자산이 남지 않을 수 있습니다.",
+
+        nextFocus:
+          "상담 수보다 고객 분석·거래 성사율·소개·재거래가 함께 좋아지는 구조를 만드는 것이 중요합니다.",
+      };
+    }
+
+    return {
+      workMeaning:
+        "현장 판단과 공정·품질·안전·사람을 함께 관리해 프로젝트를 안정적으로 완성하는 능력이 중요한 분야입니다.",
+
+      successEvidence: [
+        "공정 지연을 줄인 사례",
+        "품질이나 안전 문제를 예방한 경험",
+        "작업자와 일정을 조율해 현장을 안정적으로 운영한 경험",
+      ],
+
+      risk:
+        "문제를 직접 해결하는 능력이 강할수록 책임이 개인에게 지나치게 몰릴 수 있습니다.",
+
+      nextFocus:
+        "개인의 노력보다 공정·품질·안전·인력 관리가 반복 가능한 기준으로 작동하도록 만드는 것이 중요합니다.",
+    };
+  }
+
   return domainGuidance[
     classification.domain
   ];

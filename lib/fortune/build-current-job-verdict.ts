@@ -372,6 +372,7 @@ const strongestMatch:
     strongestMatch,
     context,
     realityMetrics,
+    domainGuidance,
   );
 
   const nextQuestion =
@@ -379,6 +380,7 @@ const strongestMatch:
     context,
     strongestMatch,
     realityMetrics,
+    domainGuidance,
   );
 
 const conciseReasons =
@@ -679,11 +681,14 @@ function buildDecisionReasons(
     context.primaryConcern ===
     "income"
   ) {
-    result.push(
-      `현재 가장 큰 문제는 직업 적합성보다 수입 구조에 가깝습니다. ${realityMetrics.metrics
-  .slice(0, 3)
-  .join("·")}이 실제 보상 개선으로 이어지는지가 다음 판단의 핵심입니다.`,
-    );
+    const incomeMetrics =
+  realityMetrics.metrics
+    .slice(0, 3)
+    .join(" · ");
+
+result.push(
+  `현재 가장 큰 문제는 직업 적합성보다 수입 구조에 가깝습니다. 다음 지표가 실제 보상 개선으로 이어지는지가 다음 판단의 핵심입니다: ${incomeMetrics}.`,
+);
   } else if (
     context.primaryConcern
   ) {
@@ -867,9 +872,9 @@ function buildKeepConditions(
     "income"
   ) {
     conditions.push(
-      `같은 시간을 써도 ${realityMetrics.metrics
+      `같은 시간을 써도 다음 핵심 지표를 개선해 실제 보상을 키울 여지가 있다: ${realityMetrics.metrics
   .slice(0, 3)
-  .join("·")}을 개선해 실제 보상을 키울 여지가 있다.`,
+  .join(" · ")}.`,
     );
   }
 
@@ -901,15 +906,19 @@ function buildChangeConditions(
 
     realityMetrics:
   CareerRealityMetrics,
+
+  domainGuidance:
+  CareerDomainGuidance,
 ) {
   const conditions = [
+    domainGuidance.risk,
     "성과를 만들어도 보상·경력·전문성 중 아무것도 남지 않는다.",
 
     "책임은 커지는데 결정권은 계속 작아진다.",
 
-    `시간이 지나도 ${realityMetrics.growthFocus
+    `시간이 지나도 다음 핵심 역량이 실제로 좋아지지 않는다: ${realityMetrics.growthFocus
   .slice(0, 3)
-  .join("·")}이 실제로 좋아지지 않는다.`,
+  .join(" · ")}.`,
   ];
 
   if (
@@ -960,6 +969,9 @@ function buildNextQuestion(
 
   realityMetrics:
     CareerRealityMetrics,
+
+    domainGuidance:
+  CareerDomainGuidance,
 ) {
   if (
     context.primaryConcern ===
@@ -973,36 +985,36 @@ function buildNextQuestion(
     .slice(0, 5)
     .join(" · ");
 
-return `현재 문제의 핵심은 직업 적합성보다 수입 구조에 가깝습니다. 앞으로 ${metrics}을 기록한 뒤 실제로 개선되는지 확인해보세요.`;
+return `현재 문제의 핵심은 직업 적합성보다 수입 구조에 가깝습니다. 앞으로 다음 항목을 기록해보세요: ${metrics}. 실제로 개선되는지 확인해보세요. ${domainGuidance.nextFocus}`;
   }
 
   if (
     context.primaryConcern ===
     "change-job"
   ) {
-    return "다음 직장을 찾기 전에 지금 회사에서 싫은 것 3개와 다음 회사에서 반드시 필요한 조건 3개를 분리해서 적어보세요.";
+    return `다음 직장을 찾기 전에 지금 회사에서 싫은 것 3개와 다음 회사에서 반드시 필요한 조건 3개를 분리해서 적어보세요. ${domainGuidance.nextFocus}`;
   }
 
   if (
     context.primaryConcern ===
     "business"
   ) {
-    return "창업 여부를 결정하기 전에 돈을 낼 고객 3명에게 실제 제안을 해보고 반응을 확인해보세요.";
+    return `창업 여부를 결정하기 전에 돈을 낼 고객 3명에게 실제 제안을 해보고 반응을 확인해보세요. ${domainGuidance.nextFocus}`;
   }
 
   if (
     roleMatch?.key ===
     "sales"
   ) {
-    return "현재 영업에서 단순 접촉량이 아니라 고객 분석·제안·계약·소개 중 내가 가장 강한 단계가 어디인지 확인해보세요.";
+    return `현재 영업에서 단순 접촉량이 아니라 고객 분석·제안·계약·소개 중 내가 가장 강한 단계가 어디인지 확인해보세요. ${domainGuidance.nextFocus}`;
   }
 
   if (
     roleMatch?.key ===
     "specialist"
   ) {
-    return "현재 전문성이 다른 사람보다 더 높은 보상이나 더 큰 책임으로 연결되고 있는지 확인해보세요.";
+    return `현재 전문성이 다른 사람보다 더 높은 보상이나 더 큰 책임으로 연결되고 있는지 확인해보세요. ${domainGuidance.nextFocus}`;
   }
 
-  return "최근 3개월 동안 가장 잘했던 업무 하나와 가장 지쳤던 업무 하나를 비교해보세요. 두 장면의 차이가 다음 선택의 단서가 됩니다.";
+  return `${domainGuidance.nextFocus} 최근 3개월 동안 가장 잘했던 업무 하나와 가장 지쳤던 업무 하나를 비교해보세요. 두 장면의 차이가 다음 선택의 단서가 됩니다.`;
 }

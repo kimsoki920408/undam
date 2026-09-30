@@ -299,6 +299,12 @@ export async function GET() {
             reasons:
               result.reasons,
 
+            keepIf:
+              result.keepIf,
+
+            changeIf:
+              result.changeIf,
+
             nextQuestion:
               result.nextQuestion,
           },
